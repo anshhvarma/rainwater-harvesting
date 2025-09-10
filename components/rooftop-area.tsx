@@ -8,12 +8,18 @@ import {
   Polygon,
 } from "@react-google-maps/api";
 
-const libraries = ["drawing", "geometry"];
+const libraries: ("drawing" | "geometry")[] = ["drawing", "geometry"];
 
-export default function PolygonMapPage() {
+export default function RooftopArea() {
+  const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API;
+
+  if (!googleMapsApiKey) {
+    throw new Error("NEXT_PUBLIC_GOOGLE_MAP_API is not defined in .env.local");
+  }
+
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyC9cTW5l-cKJdtwhXeFcmbUYUcoPLDdwtI",
-    libraries: libraries as any,
+    googleMapsApiKey,
+    libraries,
   });
 
   const [mapCenter, setMapCenter] = useState<google.maps.LatLngLiteral | null>(
@@ -55,7 +61,7 @@ export default function PolygonMapPage() {
     const area = google.maps.geometry.spherical.computeArea(path);
     setPolygonArea(area);
 
-    polygon.setMap(null); // Remove the drawing overlay after drawing completes
+    polygon.setMap(null); // Remove drawing layer after completion
   }, []);
 
   if (loadError) return <div>Error loading map</div>;
@@ -111,7 +117,7 @@ export default function PolygonMapPage() {
             </GoogleMap>
           </div>
 
-          <div className="mt-4  p-4 rounded shadow w-full max-w-xl">
+          <div className="mt-4 p-4 rounded shadow w-full max-w-xl bg-white text-black">
             <h2 className="font-semibold text-lg mb-2">Polygon Data</h2>
             <div>
               <strong>Area:</strong>{" "}
