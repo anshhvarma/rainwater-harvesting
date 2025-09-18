@@ -10,7 +10,11 @@ import {
 
 const libraries: ("drawing" | "geometry")[] = ["drawing", "geometry"];
 
-export default function RooftopArea() {
+interface RooftopAreaProps {
+  onAreaCalculated: (area: number) => void;
+}
+
+export default function RooftopArea({ onAreaCalculated }: RooftopAreaProps) {
   const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API;
 
   if (!googleMapsApiKey) {
@@ -60,6 +64,7 @@ export default function RooftopArea() {
     // Calculate area in square meters
     const area = google.maps.geometry.spherical.computeArea(path);
     setPolygonArea(area);
+    onAreaCalculated(area);
 
     polygon.setMap(null); // Remove drawing layer after completion
   }, []);
